@@ -25,4 +25,13 @@ public class AuthController {
 		return "User register successfully";		
 	}
 	
+	@PostMapping("/login")
+	public String login(
+			@RequestParam String email, 
+			@RequestParam String password) {
+		
+		authservice.login(email, password);	
+		return "Login successfull.";
+	}
+	
 }

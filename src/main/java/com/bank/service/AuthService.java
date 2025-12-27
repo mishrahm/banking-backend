@@ -20,6 +20,7 @@ public class AuthService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
+	//register 
 	public void register(String name, String email, String password) {
 		
 		// check if email already exists
@@ -32,17 +33,31 @@ public class AuthService {
 		user.setName(name);
 		user.setEmail(email);
 		
-		 // ✅ SAVE USER FIRST
-        User savedUser = userRepository.save(user);
-		
 		// 🔐 PASSWORD HASHING (BCrypt)
 		user.setPassword(passwordEncoder.encode(password));
+		
+		 // ✅ SAVE USER FIRST
+        User savedUser = userRepository.save(user);
 		
 		//create bank account for user
 		Account account = new Account();
 		account.setBalance(0.0);
-		account.setUser(user);
+		account.setUser(savedUser);
 		
 		accountRepository.save(account);
 	}
+	
+	//login 
+	public User login(String email, String password) {
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("Invalid email or password"));
+		//password verification
+		if(!passwordEncoder.matches(password, user.getPassword())) {
+			throw new RuntimeException("Invalid email or password");
+		}
+		return user;
+		
+	}
+	
+	
 }
