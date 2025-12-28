@@ -8,6 +8,7 @@ import com.bank.model.Account;
 import com.bank.model.User;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.UserRepository;
+import com.bank.security.JwtUtil;
 
 @Service
 public class AuthService {
@@ -19,6 +20,9 @@ public class AuthService {
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
 	
 	//register 
 	public void register(String name, String email, String password) {
@@ -48,14 +52,14 @@ public class AuthService {
 	}
 	
 	//login 
-	public User login(String email, String password) {
+	public String login(String email, String password) {
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new RuntimeException("Invalid email or password"));
 		//password verification
 		if(!passwordEncoder.matches(password, user.getPassword())) {
 			throw new RuntimeException("Invalid email or password");
 		}
-		return user;
+		return jwtUtil.generateToken(user.getEmail());
 		
 	}
 	

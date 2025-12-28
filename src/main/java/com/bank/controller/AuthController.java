@@ -30,8 +30,8 @@ public class AuthController {
 			@RequestParam String email, 
 			@RequestParam String password) {
 		
-		authservice.login(email, password);	
-		return "Login successfull.";
+		String token = authservice.login(email, password);
+		return token; //Later we’ll return JSON.
 	}
 	
 }
